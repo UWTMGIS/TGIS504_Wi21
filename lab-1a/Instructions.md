@@ -16,7 +16,7 @@ In your index.html file, add the necessary links to Leaflet's CSS and JS librari
    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
-  ```
+ ```
  In the `body` of the index, create a `div` element to hold the map:
   ``` html
   <div id="map"></div>
@@ -68,7 +68,7 @@ function onLocationFound(e) {
     var radius = e.accuracy; //this defines a variable radius as the accuracy value returned by the locate method divided by 2. It is divided by 2 because the accuracy value is the sum of the estimated accuracy of the latitude plus the estimated accuracy of the longitude. The unit is meters.
 
     L.marker(e.latlng).addTo(map)  //this adds a marker at the lat and long returned by the locate function.
-        .bindPopup("You are within " + Math.round(radius * 3.28084) + " feet from this point").openPopup(); //this binds a popup to the marker. The text of the popup is defined here as well. Note that we multiply the radius by 3.28084 to convert the radius from meters to feet and that we use Math.round to round the conversion to the nearest whole number.
+        .bindPopup("You are within " + Math.round(radius * 3.28084) + " feet of this point").openPopup(); //this binds a popup to the marker. The text of the popup is defined here as well. Note that we multiply the radius by 3.28084 to convert the radius from meters to feet and that we use Math.round to round the conversion to the nearest whole number.
 
     L.circle(e.latlng, radius).addTo(map); //this adds a circle to the map centered at the lat and long returned by the locate function. Its radius is set to the var radius defined above.
 }
@@ -99,7 +99,7 @@ if (radius <= 100) {
   else{
       L.circle(e.latlng, radius, {color: 'red'}).addTo(mymap);
   }
-  ```
+```
   Here we add styling the circle instead of using the blue color that is the default in Leaflet. The style is set based on a conditional operator: **if** the circle's radius (which is determined by the accuracy reading returned by the locate method) is less than or equal to 100, the circle will be green. **Else** if the radius is greater than 100, the circle will be red. ***BEWARE*** Before you test this change out, note that I've included two small errors in the code block above that you need to correct before the code will function. Just trying to keep you on your toes!
 
 ### Step 4: Changing the basemap based on environmental conditions
@@ -141,7 +141,7 @@ But how do we get the basemap to change based on today's sunset and sunrise time
 
 Believe it or not, this is pretty easy to do with JavaScript. To make it even easier, we're going to use a library called SunCalc that was developed by the same person who developed Leaflet, Vladimir Agafonkin.
 
-Check out the [documentation for SunCalc](https://github.com/mourner/suncalc) and view a live example [here](http://suncalc.net/) (note that the basemap doesn't display correctly, but everything else on the example is functioning correctly). In the Reference section, you'll see that if we use SunCalc's method `getTimes` and provide option parameters for the `date`, `latitude`, and `longitude`, the method will return information on sunrise time and sunset time, among other pieces of information. But how do we provide the parameters for date, lat, and lon based on the user's geolocation and the current date?
+Check out the [documentation for SunCalc](https://github.com/mourner/suncalc) and view a live example [here](http://suncalc.net/) (note that the basemap doesn't display correctly, but everything else on the example is functioning correctly). In the [Reference section](https://github.com/mourner/suncalc#reference) of the documentation, you'll see that if we use SunCalc's method `getTimes` and provide option parameters for the `date`, `latitude`, and `longitude`, the method will return information on sunrise time and sunset time, among other pieces of information. But how do we provide the parameters for date, lat, and lon based on the user's geolocation and the current date?
 
 The date is the easiest to get, since JavaScript can provide this for us. We can simply create a Date object with `new Date()`. For more on this, see [this documentation](https://www.w3schools.com/jsref/jsref_obj_date.asp). The latitude and longitude are also fairly easy to get, since they are returned when Leaflet's `map.locate` method runs.
 
@@ -161,7 +161,7 @@ var currentTime = new Date().getHours();
       map.removeLayer(light);
       map.addLayer(dark);
     }
-  ```
+```
 The first line of code (`var times`...) is using the SunCalc library to return all of the information about sunrise, sunset, dusk, dawn, solar noon, etc. for the date, latitude, and longitude parameters that are specified. We specify that the date parameter should be the current date by using JavaScripts `new Date()` constructor; we specify that latitude and longitude are the lat and lon returned by `map.locate` with `e.latitude` and `e.longitude` by placing this code inside the `onLocationFound(e)` function we wrote previously in Step 2.
 
 Since `getTimes` returns a lot more information than we need, we pull out just the time of sunrise and sunset and declare them as variables in the next two lines of code. We use .getHours() to specify that we only want the hour of sunset and sunrise, not the full Hours, Minutes, and Seconds that SunCalc provides.
