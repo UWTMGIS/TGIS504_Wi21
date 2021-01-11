@@ -6,7 +6,7 @@
 
 In this second part of lab 1, you will again practice making web maps that design for the unique affordances of mobile devices, this time incorporating the Turf JS library to do some basic spatial analysis in real time. 
 
-I will first walk you through a tutorial that introduces one method of Turf JS--nearestPoint--to find the nearest hospital to any given library in the Tacoma Public Library System. Then, you will build a web map that uses another method--...--- to ...
+I will first walk you through a tutorial that introduces one method of Turf JS--nearestPoint--to find the nearest hospital to any given library in the Tacoma Public Library System. Then on your own, you will use another Turf method to add some additional functionality to your map. 
 
 The first part of this lab is based on the tutorial [Analyze data with Turf.js and Mapbox GL JS](https://docs.mapbox.com/help/tutorials/analysis-with-turf/), with additions and modifications by myself. 
 
@@ -16,7 +16,7 @@ Begin by downloading the template files for the lab, including an index.html, ja
 
 ### Step 1: Initialize the map and add data
 
-Imagine you are part of a team that manages health and safety for the Tacoma Public Libraries. One important part of your preparedness mandate is to know which hospital is closes to each library in case there is an emergency at one of the library facilities. Steps [## through ##] of this lab will walk you through making a map of libraries and hospitals; then, when a user clicks on a library, the map will show which hospital is nearest.
+Imagine you are part of a team that manages health and safety for the Tacoma Public Libraries. One important part of your preparedness mandate is to know which hospital is closes to each library in case there is an emergency at one of the library facilities. Steps 1-3 of this lab will walk you through making a map of libraries and hospitals; then, when a user clicks on a library, the map will show which hospital is nearest.
 
 To initialize a Mapbox GL JS map, add the following script to your javascript.js file. Be sure to replace `accessToken}` with your own personal Mapbox access token:
 
@@ -66,7 +66,7 @@ var libraryPoints = {
 };
 ```
 
-These variables each hold a geojson FeatureCollection, one for hospitals in Pierce County, and one for Tacoma Public Libraries. (Those links will take you to the original data sources; I prepared the data in ArcMap by exporting only those features that met certain criteria, by deleting unnecessary columns from the attribute data, by projecting into WGS 1984, and then by converting to geojson). 
+These variables each hold a geojson FeatureCollection, one for [hospitals in Pierce County](https://gisdata-piercecowa.opendata.arcgis.com/datasets/public-health-care-facilities), and one for [Tacoma Public Libraries](https://gisdata-piercecowa.opendata.arcgis.com/datasets/libraries). (Those links will take you to the original data sources; I prepared the data in ArcMap by exporting only those features that met certain criteria, by deleting unnecessary columns from the attribute data, by projecting into WGS 1984, and then by converting to geojson). 
 
 Next, we'll use a `map.on('load', function(){});` to add the data to the map as layers. At the bottom of your JavaScript file, add the following code: 
 
@@ -207,13 +207,13 @@ popup.setLngLat(refLibrary.geometry.coordinates)
 });
 ```
 
-Congratulations! With just a little over 100 lines of code or so, you've (hopefully) succeeded at making a tool that will allow library staff to find their nearest hospital in Tacoma. 
+Congratulations! With ~120 lines of code or so, you've (hopefully) succeeded at making a tool that will allow library staff to find their nearest hospital in Tacoma. 
 
 ### Step 4: Use Turf to add a distance calculation to your popup
 
 On your own, use the turf.distance method (documentation [here](https://turfjs.org/docs/#distance)) to calculate the distance from the library that was clicked to its nearest hospital. Add this distance calculation to the popup that appears when a library is clicked, also adding some formatting and framing text to help the user understand. Your finished product should yield a popup that looks something like this: 
 
-[insert image]
+![screenshot showing sample popup window](https://github.com/UWTMGIS/TGIS504_Wi21/blob/master/lab-1b/image1.png)
 
 You should be able to achieve this with the addition of just 4 lines of code and modification to one existing line, though you *can* do it with as little as one additional line of code. Tips: 
 
