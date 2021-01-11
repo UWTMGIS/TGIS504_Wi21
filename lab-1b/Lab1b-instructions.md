@@ -211,7 +211,9 @@ Congratulations! With ~120 lines of code or so, you've (hopefully) succeeded at 
 
 ### Step 4: Use Turf to add a distance calculation to your popup
 
-On your own, use the turf.distance method (documentation [here](https://turfjs.org/docs/#distance)) to calculate the distance from the library that was clicked to its nearest hospital. Add this distance calculation to the popup that appears when a library is clicked, also adding some formatting and framing text to help the user understand. Your finished product should yield a popup that looks something like this: 
+On your own, use the turf.distance method (documentation [here](https://turfjs.org/docs/#distance)) to calculate the distance from the library that was clicked to its nearest hospital. Add this distance calculation to the popup that appears when a library is clicked, also adding some formatting and framing text to help the user understand. 
+
+Be sure to use **miles** for your units, and use the built-in JavaScript method [toFixed()](https://www.w3schools.com/jsref/jsref_tofixed.asp) to limit the display of the distance calculation to just two decimal points. Your finished product should yield a popup that looks something like this: 
 
 ![screenshot showing sample popup window](https://github.com/UWTMGIS/TGIS504_Wi21/blob/master/lab-1b/image1.png)
 
