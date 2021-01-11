@@ -1,4 +1,4 @@
-# Lab 1: Geolocation and mobile optimization with Leaflet
+# Lab 1a: Geolocation and mobile optimization with Leaflet
 ## TGIS 504, Winter 2021, Dr. Emma Slager
 ### Introduction
 In this lab, you will practice making web maps that recognize and design for both the unique constraints of mobile devices and their unique affordances. You will create a map that places a marker on the map based on the locational information provided by the user's device, include signifiers that indicate to the user the accuracy of their device's locational information, add functionality that switches the base map between light and dark based on whether the sun is up at the user's location, and utilize various other design conventions that optimize mobile map use. This lab also asks you to read relevant documentation on the technologies used and to answer a few questions about that documentation in order to assess your understanding of its contents.
@@ -65,7 +65,7 @@ Let's say we want to add a marker at the user's location if geolocation is succe
 
 ```javascript
 function onLocationFound(e) {
-    var radius = e.accuracy; //this defines a variable radius as the accuracy value returned by the locate method divided by 2. It is divided by 2 because the accuracy value is the sum of the estimated accuracy of the latitude plus the estimated accuracy of the longitude. The unit is meters.
+    var radius = e.accuracy; //this defines a variable radius as the accuracy value returned by the locate method. The unit is meters.
 
     L.marker(e.latlng).addTo(map)  //this adds a marker at the lat and long returned by the locate function.
         .bindPopup("You are within " + Math.round(radius * 3.28084) + " feet of this point").openPopup(); //this binds a popup to the marker. The text of the popup is defined here as well. Note that we multiply the radius by 3.28084 to convert the radius from meters to feet and that we use Math.round to round the conversion to the nearest whole number.
