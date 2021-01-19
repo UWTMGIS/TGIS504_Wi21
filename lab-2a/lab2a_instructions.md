@@ -76,7 +76,7 @@ As you plan your survey, think about how you will elicit each piece of informati
 
 ### Step 3: Publish and Share your survey
 
-**Modify the Data Schema and Publish ** 
+**Modify the Data Schema and Publish** 
 
 When you are satisfied with your survey questions, Click 'Publish'. Before finalizing your survey, click the 'Modify schema' button. Here you can view the field names of what will become a feature layer of the data collected with your survey. While these settings will not be visible to your users, they are important for the underlying structure of the data that will be collected. 
 
