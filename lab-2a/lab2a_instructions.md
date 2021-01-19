@@ -60,7 +60,7 @@ As you plan your survey, think about how you will elicit each piece of informati
 
    8. In the form preview in the main part of the screen, click on question 1, then click the 'Set Rule' button that appears in the bottom right corner of the question: 
 
-      [**insert screenshot**]
+      ![Screenshot of Set Rule icon](image1.png)
 
    9. In the 'Set rule' window, select If "Yes" and Show "What is the title of the artwork?". Then select If "No", Show "Give this artwork a name to be used in the database." Click OK. You should see an arrow icon appear in questions 2 and 3 showing the skip logic from question 1 that will make questions 2 and 3 appear depending on how the user answers question 1. 
 
