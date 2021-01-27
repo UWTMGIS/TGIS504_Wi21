@@ -122,6 +122,8 @@ In the Google Play Store or Apple App Store, download the ArcGIS Collector app o
 
 You should collect at least one sample feature from each of your feature classes, except the ParkBoundaries layer. You may collect these sample data in "the lab" (your home), or, if you are located near any Tacoma Metro Parks locations, you can collect them in the field. If you collect your samples from the lab/your home, still be sure to place your sample points inside the boundary of one of the existing parks. If you opt for field collection, please be safe and follow all the usual precautions. Instead of collecting *new* data to add to the ParkBoundaries layer, update at least one existing feature. To do this, click on a Park to update, click the 'Edit' icon (looks like a pencil, should be in the bottom left corner of the screen), click the LastSurvey field and update the date the to current date and time. Click 'Submit' in the upper right corner without making any other changes. 
 
+To learn more about configuring Collector as a user visit this link: https://doc.arcgis.com/en/collector/android-phone/help/configure-collector.htm. For guidance on using Collector, see the Quick Reference Guide at https://doc.arcgis.com/en/collector/android-phone/help/quick-reference.htm 
+
 Any edits you submit should be automatically uploaded. Log on to ArcGIS Online and view your map there to ensure that your edits were saved and submitted. 
 
 ### Part 5: Brief reflection
