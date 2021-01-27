@@ -66,17 +66,17 @@ As you'll see in part 2 of the instructions, creating the geodatabase that will 
 | GenderType                                    | Is the bathroom limited to certain genders? | String   | 50         | GenderOptions |                                                              | false          |
 | StallType                                     | Is the bathroom multi-stall or single stall | String   | 50         | StallOptions  |                                                              | false          |
 | ADA_Accessible                                | Is the bathroom ADA accessible?             | String   | 50         | YesNo         |                                                              | false          |
-| NeedsCleaning                                 | Does the bathroom need to be cleaned?       | String   | NA         | YesNo         |                                                              | false          |
-| NeedsSupplies                                 | Does the bathroom need supply refills?      | String   | NA         | YesNo         | Supplies include toilet paper, hand soap, or paper towels    | false          |
-| NeedsRepairs                                  | Does the bathroom need repairs?             | String   | NA         | YesNo         | May include plumbing, electrical, or structural repairs      | false          |
+| NeedsCleaning                                 | Does the bathroom need to be cleaned?       | String   | 50         | YesNo         |                                                              | false          |
+| NeedsSupplies                                 | Does the bathroom need supply refills?      | String   | 50         | YesNo         | Supplies include toilet paper, hand soap, or paper towels    | false          |
+| NeedsRepairs                                  | Does the bathroom need repairs?             | String   | 50         | YesNo         | May include plumbing, electrical, or structural repairs      | false          |
 | Photo                                         | NA                                          | Blob     | NA         | NA            | Attach a photo of any maintenance issues that need to be addressed | true           |
 
 | **Feature Class: Paths, Feature Type: line** |                                 |          |            |                |                                                              |                |
 | -------------------------------------------- | ------------------------------- | -------- | ---------- | -------------- | ------------------------------------------------------------ | -------------- |
 | **Field  Name**                              | **Alias**                       | **Type** | **Length** | **Domain**     | **Notes**                                                    | **Allow Null** |
-| SurfaceType                                  | Type of path surface            | String   | NA         | SurfaceOptions |                                                              | false          |
-| NeedsMaintenance                             | Does the path need maintenance? | String   | NA         | YesNo          | May include snow or debris removal or repaving.              | false          |
-| ADA_Accessible                               | Is the path ADA accessible      | String   | NA         | YesNo          | Consult ADA guidelines regarding width, slope, etc.          | false          |
+| SurfaceType                                  | Type of path surface            | String   | 50         | SurfaceOptions |                                                              | false          |
+| NeedsMaintenance                             | Does the path need maintenance? | String   | 50         | YesNo          | May include snow or debris removal or repaving.              | false          |
+| ADA_Accessible                               | Is the path ADA accessible      | String   | 50         | YesNo          | Consult ADA guidelines regarding width, slope, etc.          | false          |
 | Photo                                        | NA                              | Blob     | NA         | NA             | Attach a photo of any maintenance issues that need to be addressed | true           |
 
 Domain Table:
@@ -102,6 +102,7 @@ Symbolize your data appropriately and share your feature service online on your 
 
 * For the ParkBoundaries feature class, we will import existing data rather than build the feature class from scratch. If you are not present in class to do this with the instructor, please view the relevant portion of the class recording before continuing. You can find a zip folder containing the shapefile we will use for the import on GitHub. 
 * Remember that you must define your domains before you create any feature classes that use those domains for drop-down options. This is counter-intuitive to many users, but it is important.
+* Photos are not actually included as fields (i.e. not columns in an attribute table) but as attachments. See the class recording and linked instructions from ArcGIS.com for a reminder of how to enable attachments on a given feature class. 
 * Before publishing your service, make sure that your service is shared with the MSGT 2020-2021 cohort on the 'Sharing' tab of the 'Service Editor' window. 
 
 ### Part 3: Create a map for data collection
