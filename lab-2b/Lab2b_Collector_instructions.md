@@ -135,4 +135,4 @@ Please provide responses to the following:
 ### Deliverables
 
 * Your completed data schema tables from Part 1 (MS Word template available on GitHub)
-* Reflection responses to the questions in Part 5, including the name of your Collector map, which I access via the app and use to conduct my assessment. 
+* Reflection responses to the questions in Part 5, including the name of your Collector map, which I will access via the app and use to conduct my assessment. 
