@@ -10,7 +10,7 @@ Lab 3 is divided into three parts, each worth 20 points. The parts are divided a
 2. In Part B (next week), you will build the back end database to store collected data, using a table-based, SQL compatible Carto database. 
 3. In Part C (two weeks), you will refine the form used to collect non-spatial attribute data in the front end tool using XLS Form. 
 
-At the end of Lab 3, you will have a map-centric, SQL-based web-based data collection tool designed for a data collection scenario of your choice. Parts A & B of this lab are based on [this collaborative mapping tutorial](http://132.72.155.230:3838/js/collaborative-mapping.html), with modifications by myself. 
+At the end of Lab 3, you will have a map-centric, SQL-based data collection tool designed for a data collection scenario of your choice. Parts A & B of this lab are based on [this collaborative mapping tutorial](http://132.72.155.230:3838/js/collaborative-mapping.html), with modifications by myself. 
 
 *Technology stack for Lab 3a*
 
