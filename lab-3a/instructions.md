@@ -170,7 +170,7 @@ map.addEventListener("draw:created", function(e) {
 });
 ```
 
-Note that the content inside the `popupContent` variable is HTML, just like any of the popup content you've written so far. The `<form>` element is an HTML element just like any other (like <p> or <h1>), and the <input> elements inside of the form include a `"text"` input for the description, a second `"text"` input for the contributor's name, and a `"button"` input that we will attach an event listener to. 
+Note that the content inside the `popupContent` variable is HTML, just like any of the popup content you've written so far. The `<form>` element is an HTML element just like any other (like `<p>` or `<h1>`), and the `<input>` elements inside of the form include a `"text"` input for the description, a second `"text"` input for the contributor's name, and a `"button"` input that we will attach an event listener to. 
 
 We've gone over this before, but I also want to draw your attention to the \ in `'User\'s Name:` Because we've used single quotes in defining the HTML content, the page interprets the apostrophe in "User's" as a closing single quote. We use the backslash to "escape" the character that follows the backslash. This turns the special character (the single quote) into a string (understandable as an apostrophe). See the 'Escape Character' heading on [this page](https://www.w3schools.com/js/js_strings.asp) for more information. 
 
