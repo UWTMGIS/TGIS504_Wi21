@@ -254,7 +254,7 @@ map.addEventListener("draw:deletestop", function(e) {
 });
 ```
 
-Save your changes and open in the browser. Open the JavaScript console. Test your work by drawing shapes in the map, entering data in the form, and clicking the "submit" button. Inspect the outputs printed to the console. Draw some more shapes and before clicking submit, try editing or deleting some of them, then press '"submit" once more. The output printed to the console should reflect the up-to-date shape geometry. 
+Save your changes and open in the browser. Open the JavaScript console. Test your work by drawing shapes in the map, entering data in the form, and clicking the "submit" button. Inspect the outputs printed to the console. Draw some more shapes and before clicking submit and without closing the popup manually, try editing or deleting some of them. The popup should close when you begin edits and then open again when you finish. When you press "submit" once more, the output printed to the console should reflect the up-to-date shape geometry. 
 
 #### 1.6 Final edits and submission
 
