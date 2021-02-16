@@ -453,6 +453,6 @@ REVOKE INSERT ON TABLE table_name
 
 **Do not** run this command now, as I will test that your table is accepting submissions when I grade the lab. 
 
-#### 1.6 Submission
+#### 2.6 Submission
 
 Upload your completed map to GitHub and submit a link to your work on Canvas. You need only provide a link to your data collection tool (the map), not to your CARTO database. You've accomplished quite a lot in this lab, so once again there is no write-up for Lab 3b. 
