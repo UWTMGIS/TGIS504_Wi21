@@ -10,7 +10,7 @@ Lab 3 is divided into three parts, each worth 20 points. The parts are divided a
 2. In Part B (next week), you will build the back end database to store collected data, using a table-based, SQL compatible Carto database. 
 3. In Part C (two weeks), you will refine the form used to collect non-spatial attribute data in the front end tool using XLS Form. 
 
-At the end of Lab 3, you will have a map-centric, SQL-based web-based data collection tool designed for a data collection scenario of your choice. 
+At the end of Lab 3, you will have a map-centric, SQL-based data collection tool designed for a data collection scenario of your choice. Parts A & B of this lab are based on [this collaborative mapping tutorial](http://132.72.155.230:3838/js/collaborative-mapping.html), with modifications by myself. 
 
 *Technology stack for Lab 3a*
 
@@ -170,7 +170,7 @@ map.addEventListener("draw:created", function(e) {
 });
 ```
 
-Note that the content inside the `popupContent` variable is HTML, just like any of the popup content you've written so far. The `<form>` element is an HTML element just like any other (like <p> or <h1>), and the <input> elements inside of the form include a `"text"` input for the description, a second `"text"` input for the contributor's name, and a `"button"` input that we will attach an event listener to. 
+Note that the content inside the `popupContent` variable is HTML, just like any of the popup content you've written so far. The `<form>` element is an HTML element just like any other (like `<p>` or `<h1>`), and the `<input>` elements inside of the form include a `"text"` input for the description, a second `"text"` input for the contributor's name, and a `"button"` input that we will attach an event listener to. 
 
 We've gone over this before, but I also want to draw your attention to the \ in `'User\'s Name:` Because we've used single quotes in defining the HTML content, the page interprets the apostrophe in "User's" as a closing single quote. We use the backslash to "escape" the character that follows the backslash. This turns the special character (the single quote) into a string (understandable as an apostrophe). See the 'Escape Character' heading on [this page](https://www.w3schools.com/js/js_strings.asp) for more information. 
 
@@ -254,7 +254,7 @@ map.addEventListener("draw:deletestop", function(e) {
 });
 ```
 
-Save your changes and open in the browser. Open the JavaScript console. Test your work by drawing shapes in the map, entering data in the form, and clicking the "submit" button. Inspect the outputs printed to the console. Draw some more shapes and before clicking submit, try editing or deleting some of them, then press '"submit" once more. The output printed to the console should reflect the up-to-date shape geometry. 
+Save your changes and open in the browser. Open the JavaScript console. Test your work by drawing shapes in the map, entering data in the form, and clicking the "submit" button. Inspect the outputs printed to the console. Draw some more shapes and before clicking submit and without closing the popup manually, try editing or deleting some of them. The popup should close when you begin edits and then open again when you finish. When you press "submit" once more, the output printed to the console should reflect the up-to-date shape geometry. 
 
 #### 1.6 Final edits and submission
 
