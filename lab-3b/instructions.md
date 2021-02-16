@@ -1,4 +1,4 @@
-# Lab 3a: Leaflet.draw for front end mobile data collection
+# Lab 3b: Carto and SQL for back end mobile data collection
 
 ## TGIS 504, Winter 2021, Dr. Emma Slager
 
@@ -6,272 +6,453 @@
 
 Lab 3 is divided into three parts, each worth 20 points. The parts are divided as follows: 
 
-1. In Part A (this week), you will build the front end of a map-centric mobile data collection tool, built on Leaflet and the Leaflet.draw plugin. 
-2. In Part B (next week), you will build the back end database to store collected data, using a table-based, SQL compatible Carto database. 
-3. In Part C (two weeks), you will refine the form used to collect non-spatial attribute data in the front end tool using XLS Form. 
+1. In Part A (last week), you built the front end of a map-centric mobile data collection tool, built on Leaflet and the Leaflet.draw plugin. 
+2. In Part B (this week), you will build the back end database to store collected data, using a table-based, SQL compatible Carto database. You will also update the front end application to send data to the database.
+3. In Part C (next week), you will refine the form used to collect non-spatial attribute data in the front end tool using XLS Form. 
 
-At the end of Lab 3, you will have a map-centric, SQL-based web-based data collection tool designed for a data collection scenario of your choice. 
+At the end of Lab 3, you will have a map-centric, SQL-based data collection tool designed for a data collection scenario of your choice. 
 
-*Technology stack for Lab 3a*
+*Template files*
 
-* Atom or another text editor for authoring files
-* Leaflet libraries
-* Leaflet.draw libraries
+* **lab_3b_template.geojson**, which we will use to create our CARTO table. Download this from GitHub by pulling the latest commit from the TGIS504_Wi2021 repository, which you have hopefully already cloned, to your computer using GitHub Desktop. 
+* Your Lab 3A files, which you should save a copy of in a new Lab 3B folder. 
+
+*Technology stack for Lab 3b*
+
+* Atom or another text editor for editing files
+* Leaflet & Leaflet.draw libraries
 * Chrome or another web browser with developer tools (JS console)
+* CARTO (web interface and SQL commands)
 
-#### 1.1 Set up the workspace and initialize the map
+#### 2.1 Working with CARTO
 
-As usual, we'll start out by setting up a structure for the project. We need an HTML index, a JavaScript file, and a CSS file. You can download the templates from GitHub or create them yourself. To save you some time, I've already added the links to the Leaflet library to the head of the index, created a div to hold the map, and specified the height of that div in the CSS file. The index links to the JavaScript file, but the JS file is currently blank.
+In Part A of this lab, you set up a data collection tool that allowed users to draw shapes on a map using Leaflet.draw and entered attribute data for those shapes using an HTML form. However, the drawn layers were not stored anywhere, just printed to the console. In addition to an input interface, to have a functional data collection tool, we also need a permanent storage location and a mechanism for writing user input to that location. In this part of the lab, therefore, you will set up and configure a database to store user-submitted information so that it can be retrieved, displayed, and analyzed at a later time. 
 
-In the JavaScript file, initialize the map by adding the following code: 
+The first step in achieving this is to set up the permanent storage location for the data. We will build a relational database using [CARTO](https://carto.com/), which means that what we need is an (empty) table in our database that contains columns and data types according to the data we intend to collect. 
 
-```javascript
-var map = L.map('map').setView([51.505, -0.09], 13);
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1,
-    accessToken: '{Your Access Token Goes Here}'
-}).addTo(map);
+In this week's reading, you learned about the CARTO platform and read a bit about SQL queries for spatial databases. Here in step 2.1 we'll set up a new table in CARTO and practice running some SQL queries. 
+
+If you haven't already, sign up for a CARTO account using the [CARTO for Students](https://carto.com/help/getting-started/student-accounts/) process. This will give you free access to CARTO for two years. If you have trouble with CARTO for Students for any reason (for instance, if you do not receive verification through the GitHub Education Pack in a timely manner), you may sign up for the [12-month trial here](https://carto.com/signup/), but that should be used only as a backup option. Once you've signed up for an account, log in and visit your dashboard. 
+
+Click the 'Data' button on the top ribbon. Click 'New Dataset', and you will be given an option to connect to a local file, a database, a cloud file, or another file. Click the GeoJSON option under 'Local files'. Use the 'Browse' button or drag & drop to upload the lab_3b_template.geojson file to your CARTO account. Click 'Connect Dataset.'
+
+You should see a blank table with just two columns, 'cartodb_id' with data type 'number' and 'the_geom' of data type 'geometry'. Next, we'll modify the table using both the GUI and SQL commands. 
+
+##### 2.1.1. Modify the CARTO table
+
+First, let's add a couple of additional columns, one called 'name' and one called 'description'. These will hold the name and description attributes that your user can set with the Leaflet.draw interface you made in Part A of the lab. 
+
+Click the 'Add column' button in the upper right corner of the table, and use the interface to change the name of the column to 'name', making sure it has type 'string'.
+
+Add the second column using SQL commands instead of the GUI. In the bottom left corner of the screen, toggle from 'Metadata' to 'SQL'. This should open an SQL window that looks like this: 
+
+![screenshot of SQL window](images/image1.png)
+
+Here we can type SQL queries to modify the table, achieving tasks like adding columns, adding or removing data, or display portions of the data that meet certain criteria. To test this out, change the SQL query from the default text shown in the screenshot above to the following: 
+
+```SQL
+SELECT the_geom FROM lab_3b_template
 ```
 
-Be sure to put your Mapbox access token in the correct spot if you want to use Mapbox basemap imagery, or change your basemap tiles to another tile source if you wish. 
+Click 'Apply' to run the command. Instead of seeing all of the columns in the table, you should just see the column called 'the_geom'. Click 'Clear'.
 
-The map is currently centered and zoomed in on London. This is fine for now. 
+The general SQL syntax to add a column to a table is:
 
-#### 1.2 Add the drawing control
+ALTER TABLE *table_name*
+ADD *column_name datatype*;
 
-The first thing we need for our data collection tool is an editing tool bar that will allow us to add vector data to the map. This is similar to the editing toolbar you are likely familiar with in ArcMap, which you might use to digitize building footprints from a georeferenced aerial image. Using the toolbar, contributors will draw shapes on the map, which will late be submitted and stored to a database. To add this editing toolbar, we will use the [Leaflet.draw](https://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html) plugin, which is a well maintained plugin for Leaflet that Leaflet itself highly recommends. 
+To add a column to hold the description attribute, we will use that code, substituting in the name of our table and the name we want to give the new column, and specifying the correct data type. Copy or type the following command into the text box and click 'Apply':
 
-Start by including links to the plugin's libraries in the ```head``` of your index. As usual, we'll load these files from a CDN:
-
-```html
-<!-- Leaflet.draw links -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" integrity="sha512-gc3xjCmIy673V6MyOAZhIW93xhM9ei1I+gLbmFjUHIjocENRsLX/QUE1htk5q1XV2D/iie/VQ8DXI6Vu8bexvQ==" crossorigin="anonymous" />
+```SQL
+ALTER TABLE lab_3b_template
+ADD description text;
 ```
 
-Next, we need to create an editable layer on the map. This will be empty for now, but before we can add shapes to the map, they'll need somewhere to go. Add the following to your JavaScript code, below where you initialize the map: 
+You should see the new column appear, but in certain browsers, the CARTO interface can be a bit glitchy. If the new column does not appear, try refreshing the page, or clicking 'Add column' to get it to show up. (If you add a column, be sure to delete it using the three-dot menu next to the column header before continuing.)
 
-```javascript
-var drawnItems = L.featureGroup().addTo(map);
+Note that although the CARTO interface lists the data type for the new columns as 'string', the keyword in SQL syntax is 'text'. These are synonyms, and both are familiar to you by now, but I wanted to make sure you take note of it in case you try adding other string/text columns with SQL in the future. 
+
+Next, let's rename the table. Click the three dots next to the table name and change the name to 'lab_3b_[yourname]' changing '[yourname] to your first name, without the square brackets. Click 'OK, rename it' to confirm the change.
+
+For the curious, you can also use the following SQL command to change a table's name, but because of the aforementioned glitchiness, in this case I recommend using the GUI: 
+
+```SQL
+ALTER TABLE table_name
+RENAME TO new_table_name;
 ```
 
-The editable layer is a [Feature Group](https://leafletjs.com/reference-1.6.0.html#featuregroup) object. This is a familiar object by now, but as a reminder, it is used to combine several layers into one object, which makes it easier to do things like clear the map of all layers of a given type. We have named the editable layer drawnItems, which is a variable name we will reference it by later. 
+Finally, update the privacy settings on your table so that we can access it later. Click the 'PRIVATE' button and change the security settings to 'Public -- with link'. Click 'OK' to confirm the change. 
 
-Next, we'll add the drawing control itself by adding the following code below the declaration of ```drawnItems```: 
+##### 2.1.2. Add data to the table
 
-```javascript
-new L.Control.Draw({
-    edit: {
-        featureGroup: drawnItems
+Before we add data to the table using the Leaflet.draw interface, let's first add some sample data using an SQL command. Let's add a point at the location of the UWT campus, giving it the name 'UW Tacoma' and the description 'A beautiful, urban campus in Tacoma, WA, the City of Destiny'. We can use the SQL ```INSERT INTO``` and ```VALUES``` keywords for inserting new data, as shown in the query below (note that I am using the name of my table, but you will have to change this so that it matches the name of *your* table):
+
+```SQL
+INSERT INTO lab_3b_emma (the_geom, name, description) VALUES (
+  ST_SetSRID(
+    ST_GeomFromGeoJSON(
+      '{"type":"Point","coordinates":[-122.4383461, 47.2449897]}'
+    ), 
+  4326
+  ),
+  'UW Tacoma', 
+  'A beautiful, urban campus in Tacoma, WA, the City of Destiny'
+);
+```
+
+After changing the name of the table in the first line of the query to match *your* table's name, click 'Apply' and view the change. The result should look like the following: 
+
+![screenshot of updated table with new row](images/image2.png)
+
+The query looks quite long and complex, so let's walk through it. Note first that the high-level structure used to specify the column names and values to insert looks like this: 
+
+```SQL
+INSERT INTO table_name (..., ..., ...) VALUES (..., ..., ...);
+```
+
+The first three ```...``` symbols are replaced with the column names where the values go into. The second set of `...` symbols are replaced with the values themselves. Note that the order of the column names needs to match the order of the values, so that the correct value will be inserted into the correct column. In the present example, the ordering of the first triplet (the column names `the_geom`, `name`, and `description`) matches the order of the second triplet after the `VALUES` keyword (the geometry, `'UW Tacoma'`, and `'A beautiful, urban campus in Tacoma, WA, the City of Destiny'`). 
+
+To create the geometry value that goes into the `the_geom` column, the query makes use a function, `ST_GeomFromGeoJSON`. This function converts GeoJSON syntax (`{"type":"Point","coordinates":[-122.4383461, 47.2449897]}` in our example) into what is called Well-Known Binary, or WKB. This is a form of compression that reduces the required storage space for the database. If we were to look at the raw value that is stored for this value, instead of the long string of GeoJSON, we would see instead `010100000011f5ccdc0d9c5ec0adad8ed25b9f4740`. Note that CARTO uses an additional transformation, however, to display the geometry not in WKB but in WKT, or Well-Known Text, as `POINT(-122.4383461 47.2449897)`, which is conveniently human-readable. To explore these three formats further and convert between them, see [this online tool](https://rodic.fr/blog/online-conversion-between-geometric-formats/). 
+
+In addition to converting GeoJSON to WKB, the query uses the `ST_SetSRID` function to specify that the GeoJSON coordinates are in lng/lat, and that they use WGS 84 coordinate reference system. The SRID in `ST_SetSRID` stands for 'spatial reference ID', and it uses the EPSG code `4326` to specify that the SRID is WGS 84. The EPSG system is a public registry of geodetic datums and spatial reference systems, which can all be referred to with a numeric code. For more about the EPSG system, see [this Wikipedia entry](https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset). 
+
+##### 2.1.3. (optional) Add additional columns to represent additional attribute fields
+
+If the form you created in Part A of the lab to collect non-spatial attributes included any additional data fields, add columns to hold the values for those fields to your table now. You may use either the GUI or test yourself by writing an SQL command to achieve this. (If you only included the 'name' and 'description' fields in your form, you can move on to the next step.)
+
+#### 2.2 Using the CARTO SQL API
+
+To utilize our CARTO database with the data collection tool we built with Leaflet, we will use the [CARTO SQL API](https://carto.com/developers/sql-api/). This API allows for communication between a program that understands HTTP (such as a web browser), and database hosted on the CARTO platform. The API allows us to send SQL queries to the database via HTTP using a URL that includes the CARTO user name and the SQL query. The CARTO server processes the request and returns the data that is requested by the query in a format of choice, such as CSV, JSON, or GeoJSON. Because the API uses HTTP to send and receive data, we can send requests to the database--and get responses--using client-side JavaScript code. 
+
+The basic URL structure for sending a request to the CARTO SQL API looks like this: 
+
+```
+https://CARTO_USERNAME.carto.com/api/v2/sql?format=FORMAT&q=SQL_STATEMENT
+```
+
+where:
+
+- `CARTO_USERNAME` should be replaced with your CARTO **user name**
+- `FORMAT` should be replaced with the required **format**
+- `SQL_STATEMENT` should be replaced with the SQL **query**
+
+For example, here is a specific query:
+
+```
+https://ejeans.carto.com/api/v2/sql?format=GeoJSON&q=
+SELECT * FROM lab_3b_emma
+```
+
+where:
+
+- `CARTO_USERNAME` was replaced with `ejeans`
+- `FORMAT` was replaced with `GeoJSON`
+- `SQL_STATEMENT` was replaced with a `SELECT` statement that returns all of the records in the table named `lab_3b_emma`
+
+Based on the data that is currently in the table, the data that would be returned from this call would be the following GeoJSON content: 
+
+```JSON
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.4383461, 47.244989]
+      },
+      "properties": {
+        "name": "UW Tacoma",
+        "description": "A beautiful, urban campus in Tacoma, WA, the City of Destiny"
+      }
     }
-}).addTo(map);
+  ]
+}
 ```
 
-Save your changes and preview them in the browser. You should see a new control menu added to the top-left corner of the map. The first set of options allows you to draw different shapes--line, polygon, rectangle, circle, etc.--and the second set allows you to edit or delete a shape. Try drawing shapes with the tools. You should notice that after a shape is finished, it immediately disappears. However, what we usually want instead is for the drawn shape to persist on the map. To achieve this, we'll add an even listener that triggers a function to add the shape as a layer to the ```drawnItems``` feature group. Add this code at the bottom of your JavaScript file: 
+<!--It's important to note that whenever we export the result of the query in a spatial format (such as `format=GeoJSON`), the geometry column (`the_geom` in this case) must appear in the query. Otherwise, the server cannot generate the geometric part of the layer, and we get an error. For instance, if instead of selecting `*` from the table, we selected only the columns `name` and `description` using the following API call--
 
-```javascript
-map.addEventListener("draw:created", function(e) {
-    e.layer.addTo(drawnItems);
-});
+```
+https://ejeans.carto.com/api/v2/sql?format=GeoJSON&q=
+SELECT name, description FROM lab_3b_emma
 ```
 
-The ```draw:created``` [event is part of the Leaflet.draw library](https://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html#l-draw-event). The object that is created when it fires contains a property called 'layer' that contains the newly drawn shape. We use the code above to add that layer to the feature group ```drawnItems```. Now the shape will persist on the map. Because we made the feature group editable when we initialized the drawing control, you can now use the 'edit layers' button and the 'delete layers' button to adjust the location or vertices of your shape or delete it altogether. Save your changes and try this out in the browser. 
+the result would be the following error message, instead of the requested GeoJSON: 
 
-#### 1.3 Working with drawn items
+```json
+{"error":["column \"the_geom\" does not exist"]}
+```
 
-##### 1.3.1 Printing drawnItems to the console
+If we wanted *only* non-geographic attribute data to be returned, we could run the API call without specifying any format, and then the result would be returned in default JSON. For example, 
 
-Now that you can draw items and add them to a feature group so that they persist on the map, the next step is to see how we can do something more with drawn shapes. Eventually, you will send the shapes to a database to be stored and accessed later, but for now, we'll use ```console.log``` to print the geometry of the shapes to the console so we can inspect them. 
+```
+https://ejeans.carto.com/api/v2/sql?&q=
+SELECT name, description FROM lab_3b_emma
+```
 
-To print the GeoJSON of the drawn shapes, we will modify the ```draw:created``` event listener. Replace the three lines of code for that event listener with this expanded version: 
+would return: 
+
+```json
+{"rows":[{"name":"UW Tacoma","description":"A beautiful, urban campus in Tacoma, WA, the City of Destiny"}],"time":0.008,"fields":{"name":{"type":"string","pgtype":"text"},"description":{"type":"string","pgtype":"text"}},"total_rows":1}
+```
+-->
+
+Because the returned file is in GeoJSON format, we can import it into a Leaflet map quite easily. In the next step, we'll use a call to the CARTO SQL API to display data on our map. 
+
+#### 2.3 Displaying data from CARTO in Leaflet
+
+In your file manager (Windows file explorer or MacOS Finder, depending on your operating system), copy the files that you submitted for Lab 3, Part A into a new folder for Lab 3, Part B. These will be your starter files for this part of the lab, but you'll save them as a copy in a new location rather than overwriting your old files. 
+
+In Atom, open the Project Folder for your newly copied files, and open the JavaScript file. Take a moment to re-familiarize yourself with the code that you wrote here last week. From top to bottom, it should achieve the following: 
+
+* initialize a map, set the default view and base map tile layer
+* create an editable feature group named `drawnItems`
+* instantiate a control that allows the user to draw shapes on the map
+* create a function that opens a form within a popup on any shape the user draws and add an event listener to open that popup when the shape is completed
+* create a function that saves data of the shape's geometry and attributes entered into the form. This data is currently printed to the console when the event listener tied to the 'submit' button on the form is triggered. 
+* add a series of event listeners to control the behavior of the popup when a shape is being edited. 
+
+The first change we will make to the existing code will be to add previously drawn shapes that are stored in the CARTO table to the map. Under the line of code where you declare the `drawnItems` variable and before where you instantiate the Leaflet.draw control (`new L.Control.Draw...`), add the following: 
 
 ```javascript
-map.addEventListener("draw:created", function(e) {
-    e.layer.addTo(drawnItems);
-    drawnItems.eachLayer(function(layer) {
-        var geojson = JSON.stringify(layer.toGeoJSON().geometry);
-        console.log(geojson);
+var cartoData = L.layerGroup().addTo(map);
+var url = "https://ejeans.carto.com/api/v2/sql";
+let urlGeoJSON = url + "?format=GeoJSON&q=";
+var sqlQuery = "SELECT the_geom, description, name FROM lab_3b_emma";
+function addPopup(feature, layer) {
+    layer.bindPopup(
+        "<b>" + feature.properties.name + "</b><br>" +
+        feature.properties.description
+    );
+}
+
+fetch(urlGeoJSON + sqlQuery)
+    .then(function(response) {
+    return response.json();
+    })
+    .then(function(data) {
+        L.geoJSON(data, {onEachFeature: addPopup}).addTo(cartoData);
     });
-});
 ```
 
-The new part of the code here is the second internal expression, starting with ```drawnItems.eachLayer```. The ```.eachLayer``` method of the feature group is a convenient way of iterating so that the specified function is applied to each layer in the feature group. This should be familiar to you from our work on conditional styling in Fall Quarter when we used ```.forEach``` to style features in a layer, for instance. Inside the function that is applied on each layer, there are two expressions: 
+This code does a few things. Let's look first at the top chunk of code. Here we declare a variable named `cartoData` to hold the data already in the CARTO table (as a layer group) and we add it to the map. Next we create variables called `url`, `urlGeoJSON` and `sqlQuery` to hold portions of the CARTO SQL API call, which we'll use in a moment. We don't have to store these as variables, but breaking the API call up like this makes it easy to understand and modify different parts of the call to adjust what we request from CARTO. Finally, we write a function to bind a popup to the features that will be displayed from the CARTO data. Note that the popup for each of the loaded features displays the `name` and the `description` properties, which the user will enter in the popup form when submitting drawn shapes. 
+
+Next let's look at the second chunk of code. This uses a method that is likely new to you, namely `fetch`. 
+
+![Mean Girls fetch gif](https://media3.giphy.com/media/G6ojXggFcXWCs/giphy.gif)
+
+Fetch is a JavaScript API used for loading resources asynchronously in the web page. In this sense, it is very similar to the AJAX requests you've made with JQuery to load GeoJSONs into Leaflet maps in the past. You can [learn more about the Fetch API here](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)--and note that it is not supported by the Internet Explorer browser at this time. 
+
+The Fetch request we make in the code above requests the resource located at the specified parameter--in this case, the URL created by the combination of the variables `urlGeoJSON` and `sqlQuery`, or `https://ejeans.carto.com/api/v2/sql?format=GeoJSON&q=SELECT the_geom, description, name FROM lab_3b_emma`. 
+
+The `.then()` method in the next bit of code takes the response from the Fetch request and formats it as JSON, and the next `.then()` adds the popups created by the `addPopup` function we wrote above to the map. 
+
+Save your changes and preview in your browser. Navigate in the map to Tacoma, and you should see a point on the map with a clickable popup: 
+
+![screenshot of marker loaded from CARTO](images/image3.png)
+
+This marker is being loaded from the CARTO table named lab_3b_emma, stored in my CARTO account (username ejeans).
+
+*On your own* update the `url` variable and the `sqlQuery` variable to draw data not from my CARTO database but from your own. You will have to replace my username with your own, and replace my table name with your table's name. When you've done this successfully, you should see the same marker in the same location (because that same data should be stored in your table), but the map will be fetching data from the table that you created in step 2.1 above, rather than from my table. 
+
+#### 2.4 Sending user inputs to the CARTO database 
+
+In step 2.3 you displayed data *from* the CARTO database on your map; now it's time to send user inputs from your map *to* the database. 
+
+In Lab 3, Part A, you wrote a function called `setData` that, when the user clicked the 'submit' button on the HTML form, packaged the geometry of the shape the user had drawn as a variable named `drawing`, and packaged the attributes the user had entered for the name and description as variables named `enteredUsername` and `enteredDescription`. It then used `console.log` to print these three variables to the console. Now, instead of printing the variables to the console, we want to send them to the database as values to be stored in a row. 
+
+Replace the portion of the code inside the `setData` function shown in the screenshot below with the code in the code block below.
+
+Replace this: 
+
+![screenshot of what to replace](images/image4.png)
+
+With this: 
 
 ```javascript
-        var geojson = JSON.stringify(layer.toGeoJSON().geometry);
-        console.log(geojson);
-```
-
-These two expressions actually do a lot: 
-
-* Converting the current ```layer``` to GeoJSON with the ```.toGeoJSON``` method
-* Selecting just the ```geometry``` property of the GeoJSON, using ```.geometry```
-* Applying the ```JSON.stringify ``` function (a method built into JavaScript; documentation [here](https://www.w3schools.com/js/js_json_stringify.asp))  to convert the the GeoJSON geometry object to a string. 
-* Printing the string with ```console.log```
-
-Save your changes and open your work in the browser. Open developer tools to view the JavaScript console. Draw several shapes and inspect the output that is printed to the console. If you want, you can delete the ```.geometry``` portion of the code to see how that changes what is printed. Just be sure to add the ```.geometry``` portion of the code back in before moving on to the next step. 
-
-##### 1.3.2 Simplifying the drawing controls
-
-In the browser, use the drawing controls to add a marker, circle, and a circle marker to the map. Closely examine the geometry of the three shapes that is printed to the console. You should notice that the "type" of all three shapes is listed as "Point" geometry. You may remember from close readings of the Leaflet documentation in Fall Quarter that the geometry of a circle marker includes one pair of coordinates for the center of the circle and a radius specified in pixels. (A circle is the same, but whereas the circleMarker has a default radius of 10 pixels, the L.circle object has no default radius.)
-
-With the `.toGeoJSON()` method, then, markers, circles, and circle markers all become `"Point"` geometries when converted to GeoJSON, where the original radius is not being kept for circles and circle markers. Similarly, rectangles and polygons are both recorded simply as `"Polygon"` geometries. 
-
-For simplicity and consistency with the GeoJSON format, which we are going to use to record drawn shapes and send them to the database in Part 2 of the lab, it therefore makes sense to only allow drawing of three shape types: 
-
-* lines, which will be converted to "LineString" GeoJSON
-* polygons, which will be converted to "Polygon" GeoJSON
-* markers, which will be converted to "Point" GeoJSON
-
-Back in your JavaScript file, replace the section of the code that initializes the draw control with the following: 
-
-```javascript
-new L.Control.Draw({
-    draw : {
-        polygon : true,
-        polyline : true,
-        rectangle : false,     // Rectangles disabled
-        circle : false,        // Circles disabled 
-        circlemarker : false,  // Circle markers disabled
-        marker: true
-    },
-    edit : {
-        featureGroup: drawnItems
-    }
-}).addTo(map);
-```
-
-Save your changes and preview in the browser. Your drawing control should now have just three options: line, polygon, and point. 
-
-#### 1.4 Collecting attribute data with a form
-
-In addition to shape geometry, a data collection tool usually collects non-spatial attribute data too, as you well know from prior labs with Survey123 and Collector for ArcGIS. To allow us to collect attribute data, we will use a simple [HTML form](https://www.w3schools.com/html/html_forms.asp) that allows the user to enter a description of the shape they drew and the contributor's name. The description and name entered by the user will eventually be sent to the database as non-spatial attributes, together with the GeoJSON representing the drawn geometry. 
-
-Our submission form will reside in a popup, conveniently appearing on top of the drawn shape once it is finished. The form contents will be defined with HTML code that we will wrap in a function called `createFormPopup` that binds and opens a popup with an editable form. **Add** the following function to your JavaScript code below the part of the code that initializes the draw control and **change** the `map.addEventListener` part of the code as follows:
-
-```javascript
-function createFormPopup() {
-    var popupContent = 
-        '<form>' + 
-        'Description:<br><input type="text" id="input_desc"><br>' +
-        'User\'s Name:<br><input type="text" id="input_name"><br>' +
-        '<input type="button" value="Submit" id="submit">' + 
-        '</form>'
-    drawnItems.bindPopup(popupContent).openPopup();
-}
-
-map.addEventListener("draw:created", function(e) {
-    e.layer.addTo(drawnItems);
-    createFormPopup();
-});
-```
-
-Note that the content inside the `popupContent` variable is HTML, just like any of the popup content you've written so far. The `<form>` element is an HTML element just like any other (like <p> or <h1>), and the <input> elements inside of the form include a `"text"` input for the description, a second `"text"` input for the contributor's name, and a `"button"` input that we will attach an event listener to. 
-
-We've gone over this before, but I also want to draw your attention to the \ in `'User\'s Name:` Because we've used single quotes in defining the HTML content, the page interprets the apostrophe in "User's" as a closing single quote. We use the backslash to "escape" the character that follows the backslash. This turns the special character (the single quote) into a string (understandable as an apostrophe). See the 'Escape Character' heading on [this page](https://www.w3schools.com/js/js_strings.asp) for more information. 
-
-Save your changes and view them in the browser. Draw a shape to see what happens. We are no longer printing the shape geometry to the console, but now, when you finish drawing a shape, a popup appears containing the form. You can enter values in the form's text inputs and click the submit button, but nothing will happen until we attach the event listener to the submit button and define a function to run when it is clicked. 
-
-Next, let's write that function, which we will call `setData`. Add to the bottom of your JavaScript file: 
-
-```javascript
-function setData(e) {
-
-    if(e.target && e.target.id == "submit") {
-
-        // Get user name and description
-        var enteredUsername = document.getElementById("input_name").value;
-        var enteredDescription = document.getElementById("input_desc").value;
-
-        // Print user name and description
-        console.log(enteredUsername);
-        console.log(enteredDescription);
-
-        // Get and print GeoJSON for each drawn layer
-        drawnItems.eachLayer(function(layer) {
+   	// For each drawn layer
+    drawnItems.eachLayer(function(layer) {
+           
+			// Create SQL expression to insert layer
             var drawing = JSON.stringify(layer.toGeoJSON().geometry);
-            console.log(drawing);
+            var sql =
+                "INSERT INTO lab_3b_emma (the_geom, name, description) " +
+                "VALUES (ST_SetSRID(ST_GeomFromGeoJSON('" +
+                drawing + "'), 4326), '" +
+                enteredUsername + "', '" +
+                enteredDescription + "')";
+            console.log(sql);
+
+            // Send the data
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "q=" + encodeURI(sql)
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log("Data saved:", data);
+            })
+            .catch(function(error) {
+                console.log("Problem saving the data:", error);
+            });
+
+        // Transfer submitted drawing to the CARTO layer 
+        //so it persists on the map without you having to refresh the page
+        var newData = layer.toGeoJSON();
+        newData.properties.description = enteredDescription;
+        newData.properties.name = enteredUsername;
+        L.geoJSON(newData, {onEachFeature: addPopup}).addTo(cartoData);
+
+    });
+```
+
+Once again, there's a lot going on here, so let's take it bit by bit. Let's look at the part under the first comment: 
+
+```javascript
+		// For each drawn layer
+        drawnItems.eachLayer(function(layer) {
+        	// Code does something with each drawn layer
         });
-
-        // Clear drawn items layer
-        drawnItems.closePopup();
-        drawnItems.clearLayers();
-
-    }
-}
 ```
 
-The `setData` function collects the user entered information into three variables and, for now, prints them to the console: 
+The `.eachLayer` method used here allows us to iterate so that the code that follows will run for every shape that the user draws on the map. Note that the final curly bracket and parenthesis of the code closes this function, as indicated by the tabbing that aligns it with this opening line of code. 
 
-* `enteredUsername`: the text input from the `#input_name` field of the popup
-* `enteredDescription`: the text input from the `#input_desc` field of the popup
-* `drawing`: the geometry of each drawn shape, as GeoJSON
+So what does the internal function in the `.eachLayer` iteration do with each layer? Three things: 
 
-The first two inputs, `enteredUsername` and `enteredDescription`, are extracted from the text input area using the `.value` property. The `drawing` variable is created a little differently, inside an `.eachLayer` iteration. Using an iteration is essential, since the `drawnItems` feature group may contain more than one layer in case the user has drawn more than one shape. In such case, each layer is converted into a separate GeoJSON and separately printed in the console. 
+1. **Construct** the `INSERT` query for adding a new record into the CARTO table
+2. **Send** the query to the CARTO SQL API
+3. **Copy** the submitted drawing to the CARTO layer, to display it on the map
 
-Finally, add an event listener to the end of your JavaScript code so that when the submit button is clicked, the `setData` function will run: 
+Here is the code for the SQL query construction:
 
 ```javascript
-document.addEventListener("click", setData);
+        // Create SQL expression to insert layer
+            var drawing = JSON.stringify(layer.toGeoJSON().geometry);
+            var sql =
+                "INSERT INTO lab_3b_emma (the_geom, name, description) " +
+                "VALUES (ST_SetSRID(ST_GeomFromGeoJSON('" +
+                drawing + "'), 4326), '" +
+                enteredUsername + "', '" +
+                enteredDescription + "')";
+            console.log(sql);
+```
+Here we've made some adjustments to what happens with the `drawing` variable, which in Part A we simply printed to the console. First thing first: **change the name of the table in the sql statement from `lab_3b_emma` to *your* table's name.** Now that that's done, what's happening here is you're writing a SQL command to insert data into your table. This is just like what we did in part 2.1.2. above, only you're writing the SQL command in JavaScript instead of in the SQL interface in CARTO, and you're using variables to construct the query dynamically from user inputs. Just like before, you're converting the geometry of the shape from GeoJSON to WKB, using EPSG code 4326 to indicate that the coordinates are in WGS 84. You're also setting the values to be inserted into the `name` and `description` columns equal to what the user entered in the popup form. To help us double check our work, we're also using `console.log` to see in the browser's JS console what's being submitted to the database. 
+
+In the code under the next comment, we actually send the data to the database with the CARTO SQL API: 
+
+```Javascript
+            // Send the data
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "q=" + encodeURI(sql)
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log("Data saved:", data);
+            })
+            .catch(function(error) {
+                console.log("Problem saving the data:", error);
+            });
 ```
 
-Note that the event listener is binded to the *document* rather than to the “submit” button. The reason is that the popup is a dynamic element. For instance, the popup may be closed and re-opened when the layer is being edited. As a result, the event listener would have to be binded each time the popup re-appears. The solution here is different, relying on a mechanism known as [event delegation](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events#Event_delegation). This is related to the `if` statement that opens the `setData` function: 
+Notice again that we are using Fetch, and that we are connecting to the URL you specified with the `url` variable in step 2.3. In my case, the URL is `https://ejeans.carto.com/api/v2/sql`, and for you, it will be the URL that contains your CARTO username. We use the `POST` method (an HTTP method for sending data to a server; [documentation available here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST)) to send the data, properly formatted and encoded. The remaining parts of the code (the `.then()` functions and the `.catch` function) log some additional information to the console to help us notice and resolve any errors. 
 
-```
-if(e.target && e.target.id == "submit") {...}
-```
-
-The part `e.target && e.target.id == "submit"` means “check if `e.target` exists, and if it does check if its `id` is equal to `"submit"`. Since the event listener is binded to the `document`, it persists even if the popup is closed (or even if it was not created yet). However, the event listener is not triggered by any click in the `document`, but only by clicks on the "submit" button.
-
-Save your changes and test the results in the browser. As the user, you can draw one or more shapes with the drawing control. Each time a shape is drawn, a popup with the *name* and *description* text inputs is opened. Once the user decides to click “submit”, the name and description, as well as each GeoJSON for the drawn shapes, are printed in the console. Finally, the popup is closed, and the layer is removed from the map using the `.closePopup` and `.clearLayers` methods in the last two expressions.
-
-#### 1.5 Fine-tuning the popup behavior based on drawing events
-
-One minor inconvenience is that the submission popup remains open while entering the “edit” or “delete” modes. This is counter-intuitive, as we should not submit the drawing while still editing it and making changes. The following code binds a few additional event listeners to close the popup when the user enters the “edit” or “delete” modes, and re-open it when done editing or deleting. This is accomplished using `"draw:editstart"`, `"draw:deletestart"` event listeners combined with the `.openPopup` method on the one hand, and the `"draw:editstop"` and `"draw:deletestop"` event listeners combined with the `.closePopup` methods on the other hand.
-
-As you can see in the code section that follows, the `"draw:deletestop"` event listener is slightly more complex: its internal code contains a conditional for checking whether the user has deleted *all* of the drawn shapes. In the latter case, running `drawnItems.openPopup()` would cause an error, since there are no layers to open the popup on. Therefore, a conditional is first being evaluated to verify that at least one layer remains when the user is done deleting. If there is at least one layer—the editable popup will open. If there are no layers left—nothing will happen; the user will see an empty map where they can draw new shapes once more.
-
-Enter the following code to the bottom of your JavaScript file: 
+Finally, let's look at the code under the last comment: 
 
 ```javascript
-map.addEventListener("draw:editstart", function(e) {
-    drawnItems.closePopup();
-});
-map.addEventListener("draw:deletestart", function(e) {
-    drawnItems.closePopup();
-});
-map.addEventListener("draw:editstop", function(e) {
-    drawnItems.openPopup();
-});
-map.addEventListener("draw:deletestop", function(e) {
-    if(drawnItems.getLayers().length > 0) {
-        drawnItems.openPopup();
-    }
-});
+        // Transfer submitted drawing to the CARTO layer 
+        //so it persists on the map without you having to refresh the page
+        var newData = layer.toGeoJSON();
+        newData.properties.description = enteredDescription;
+        newData.properties.name = enteredUsername;
+        L.geoJSON(newData, {onEachFeature: addPopup}).addTo(cartoData);
 ```
 
-Save your changes and open in the browser. Open the JavaScript console. Test your work by drawing shapes in the map, entering data in the form, and clicking the "submit" button. Inspect the outputs printed to the console. Draw some more shapes and before clicking submit, try editing or deleting some of them, then press '"submit" once more. The output printed to the console should reflect the up-to-date shape geometry. 
+This part of the code transfers the drawn data to the `cartoData` layer to display it on the map without reloading the map. Basically, the drawn `layer` is translated to GeoJSON, combined with the`name` and `description` properties, then added on the map with `L.geoJSON`. Without this part, our drawing would only be sent to the database without being shown on the map, unless we reload the web page. 
 
-#### 1.6 Final edits and submission
+Save your changes and preview in the browser. Draw a shape on your map, enter some attribute information for the name and description, and click submit. Your shape should persist on the map; this is great! Next let's check the JS console to make sure the data was submitted to the database. 
 
-For now, your attribute data collection form is very simple, just collecting two text inputs from the user--name and description. In Part C of this lab, you'll build that out in much greater depth to fit a data collection scenario of your choosing (remember Reading Response 3? We're finally circling back to that.) For now, we'll keep it simple, but I still want to you to implement some changes to the front-end of your tool to demonstrate your mastery of these concepts. To that end, I want you to tailor your map so that it could be used by people in your hometown to record their favorite places in town. Make the following adjustments: 
+Logged to the console, you should see an SQL statement with the geometry of the shape you drew and values for the non-spatial attributes based on what you entered in the form. However, you probably also see a 403 error. If you expand the warning message, it likely tells you 'permission denied for table lab_3b_yourname', like this: 
 
-1. Change the default view and zoom to be appropriate for your hometown (or, if you feel you don't have a single hometown, to whatever place you wish to focus on).
-2. Add a bit of explanatory text (in an alert window, on an about page that you link to, or using some other layout of your choice) explaining to users of the map what the goal of the map is and how to use it. 
-3. Remove the line option from the draw control so that users can only submit polygons or points. 
-4. Modify the input fields on your form to collect a title for the point or polygon, rather than a username. Order your inputs so that the user enters the title before they enter the description. 
+![screenshot of error message](images/image5.png)
 
-*Some additional notes:* 
+Alas! This means the next step is to update permissions on the CARTO table. 
 
-* Until you set up a database to store the submitted data, the data will not persist on the map. That is OK for now! We'll fix this issue in Part B next week. 
-* You may add additional fields or default values to your form if you wish. For more on how to create and edit HTML forms, see this page: https://www.w3schools.com/html/html_forms.asp.
-* You may change the basemap or make other changes to the design of the page if you wish. If you make design changes, keep in mind the best practices for mobile web design from the [Ricker and Roth reading](https://gistbok.ucgis.org/bok-topics/mobile-maps-and-responsive-design). 
-* Bonus points may be awarded for particularly effective designs and/or forms. 
+#### 2.5 Updating permissions on the CARTO table
 
-##### Submission
+Any database is always associated with one or more database users, who are granted a specific set of privileges. When you set up your ArcGIS Online database for the Collector map you made in Lab 2, you granted 'Add,' 'Delete', and 'Update' privileges to members of your MSGT cohort, for instance. We typically talk about database user privileges in terms of various roles. For example, an administrator may have the maximal set of privileges, meaning they can do anything in the database: reading and writing into tables, creating new tables, deleting existing tables, adding or removing other uses, and so on. On the other hand, a read-only user may have a more limited set of privileges so that they can only consume data from the database but cannot make changes to any tables. 
 
-Upload your completed map to GitHub and submit a link to your work on Canvas. There is no write-up for Lab 3a. 
+The way you've accessed your CARTO database with the CARTO SQL API implies a database connection with the default user named `publicuser`, which is automatically created by CARTO when you set up your account. The `publicuser` has **read** permissions on all tables in your database, which is why you can execute the SQL query starting with `SELECT` in step 2.3 to display data from the database in your map. However, the `publicuser` does not, by default, have **write** permissions that would allow them to modify the table. This is why the above `INSERT` query failed with a `"permission denied"` error. 
+
+In addition to `public user`, CARTO defines an API Key user, who has all possible privileges on the tables in the database--read, write, update, create, delete, and so on. To use the CARTO SQL API with the “API Key” user, we need to supply an additional `api_key` parameter in our query, as in:
+
+```javascript
+https://ejeans.carto.com/api/v2/sql?q=
+INSERT INTO lab_3b_emma (the_geom, name, description) 
+VALUES (ST_SetSRID(ST_GeomFromGeoJSON(
+'{"type":"Point","coordinates":[34.838848,31.296301]}'
+),4326),'test','test')&
+api_key=fb85************************************
+```
+
+You're familiar with API keys from your work with Mapbox. You can get the API Key from your account settings panel in the CARTO web interface. So, there are two possible solutions to the "permission denied" problem when trying to insert a new record into the table: we can either connect to the database as the API Key user, who already has permissions to edit the table, or we can grant the `publicuser` a new privilege, for running `INSERT` queries on the `lab_3b` table. 
+
+The first option may seem the most convenient, since the only thing we need to do is locate our API Key string in the CARTO interface and attach it in the SQL API query URL, as shown above. However, there is a serious security issue we need to consider when using this approach. If we include the API Key in our JavaScript code, in principle anyone looking into the source code of our page will be able to copy the API Key and use it to make any kind of SQL query on our account. For example, they could permanently delete any table in our account using `DROP TABLE` command. Exposing the API Key in *client-side* scripts is therefore a serious security risk. The API Key is really intended only for *server-side* scripts, whose source code cannot be accessed by the web page users. For instance, the server-side script may accept requests with a password the user entered; if the password is valid the server can make a query to the CARTO SQL API and send back the result, otherwise the query will be rejected. This approach requires setting up a dynamic server, which means that, to use it securely, the API Key solution is not so simple after all. 
+
+For a simple crowdsourcing app, intended for a trusted audience, the second option of granting `INSERT` privileges to `publicuser` is a simple and effective solution. In a way, this makes our database exposed: anyone who enters our web page will be able to insert new records into the table. On the other hand, the worst-case scenario is just that our table will be filled with many unnecessary records. The only privilege we will grant is `INSERT`, which means that `publicuser` cannot delete any previously entered records or modify the table in any other way. Moreover, when the URL for our page is shared with a trusted audience, such as among students taking a survey in a class, the chances of someone taking the trouble of finding our page and intentionally sabotaging our database by filling it with a large amount of fake records is very small. Thus, in small-scale use cases, the effort of making a dynamic server with an authentication system may be superfluous, since the simple solution presented below is sufficient.
+
+To grant the permission for making `INSERT` queries on the `beer_sheva` table, the following SQL query needs to be executed. The `publicuser` obviously does not have the permission to grant himself/herself with additional privileges. Therefore the query needs to be executed inside the **SQL editor** on the CARTO web interface, which implies full privileges, or using the SQL API with the the API Key. We'll use the CARTO web interface. 
+
+Return to your CARTO account and open your lab_3b table. Toggle on the SQL editor, and run the following command, being sure to change the name of the table to match **your** table's name: 
+
+```sql
+GRANT INSERT  
+  ON lab_3b_emma 
+  TO publicuser;
+```
+
+Return to your map in the browser window and refresh the page. Try again to draw a shape, add some attribute values, and click submit. Check the JS console to see if you have gotten a permissions error. 
+
+It is very possible that you have again received an error, but a different one this time. For instance, my error this time reads `["permission denied for sequence lab_3b_template_copy_cartodb_id_seq0"]` 
+
+![screenshot of second error message](images/image6.png)
+
+If you receive this error as well, run the following command in the CARTO SQL editor, being sure to replace the name of the sequence with the exact name given in **your** error message, e.g.: 
+
+```SQL
+GRANT USAGE ON SEQUENCE lab_3b_template_copy_cartodb_id_seq0
+  TO publicuser;
+```
+
+Return once more to your map in the browser window and refresh the page. Try again to draw a shape, add some attribute values, and click submit. Check the JS console to see if you have gotten a permissions error. This time, instead of an error, you should see a message stating that the data was saved: 
+
+![screenshot of Data saved message](images/image7.png)
+
+Now return to your table in the CARTO web interface. You should see a new row added to your table with the geometry and attributes you just entered on the map and form: 
+
+![screenshot of table with new row](images/image8.png)
+
+Success! The database is now ready to receive data collection entries. Feel free to experiment with adding more shapes and refresh your CARTO table to see them added to the database. You can always delete rows that you do not want to keep by clicking the three vertical dots next to any of the row's values and selecting 'Delete this row...`
+
+If at some point in the future you wanted to disable the ability for a `publicuser` to insert data into the table, for example when data collection is completed and we do not want to accept any more entries, you can always **revoke** the privilege granted to `publicuser` as follows:
+
+```sql
+REVOKE INSERT ON TABLE table_name
+  FROM publicuser; 
+```
+
+**Do not** run this command now, as I will test that your table is accepting submissions when I grade the lab. 
+
+#### 1.6 Submission
+
+Upload your completed map to GitHub and submit a link to your work on Canvas. You need only provide a link to your data collection tool (the map), not to your CARTO database. You've accomplished quite a lot in this lab, so once again there is no write-up for Lab 3b. 
