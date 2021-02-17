@@ -217,7 +217,7 @@ The first change we will make to the existing code will be to add previously dra
 ```javascript
 var cartoData = L.layerGroup().addTo(map);
 var url = "https://ejeans.carto.com/api/v2/sql";
-let urlGeoJSON = url + "?format=GeoJSON&q=";
+var urlGeoJSON = url + "?format=GeoJSON&q=";
 var sqlQuery = "SELECT the_geom, description, name FROM lab_3b_emma";
 function addPopup(feature, layer) {
     layer.bindPopup(
