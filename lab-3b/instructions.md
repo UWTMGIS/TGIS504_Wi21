@@ -241,7 +241,7 @@ Next let's look at the second chunk of code. This uses a method that is likely n
 
 ![Mean Girls fetch gif](https://media3.giphy.com/media/G6ojXggFcXWCs/giphy.gif)
 
-Fetch is a JavaScript API used for loading resources asynchronously in the web page. In this sense, it is very similar to the AJAX requests you've made with JQuery to load GeoJSONs into Leaflet maps in the past. You can [learn more about the Fetch API here](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)--and note that it is not supported by the Internet Explorer browser at this time. 
+Fetch is an HTML 5 API used for loading resources asynchronously in the web page. In this sense, it is very similar to the AJAX requests you've made with JQuery to load GeoJSONs into Leaflet maps in the past. You can [learn more about the Fetch API here](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)--and note that it is not supported by the Internet Explorer browser at this time. 
 
 The Fetch request we make in the code above requests the resource located at the specified parameter--in this case, the URL created by the combination of the variables `urlGeoJSON` and `sqlQuery`, or `https://ejeans.carto.com/api/v2/sql?format=GeoJSON&q=SELECT the_geom, description, name FROM lab_3b_emma`. 
 
