@@ -187,7 +187,8 @@ This should open a document named `.bash_profile` in your default text editor. I
 
 ```bash
 export ANDROID_SDK_ROOT=/Development/android-sdk/
-export PATH=${PATH}:/Development/android-sdk/platform-tools:/Development/android-sdk/tools
+export PATH=${PATH}:/Development/android-sdk/platform-tools:/Development/android-sdk/tools:/opt/gradle/gradle-6.8.3/bin
+
 ```
 
 Save and close your text editor. 
