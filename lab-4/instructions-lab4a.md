@@ -213,10 +213,10 @@ If you do *not* get those results, don't panic. I suggest the following troubles
 
 1. Close and reopen the command interface, then run the check again.
 2. Check that you correctly set your environment settings, without any typos in the variable names or variable values (pathnames). After making any changes to the environment settings, make sure you open a new command console before running the check again.
-  * If you are workign on a Windows machine, try setting the environment settings (defining the ANDROID_SDK_ROOT and JAVA_HOME variables and updating the Path variable) for your User Variables (top half of the window) in the same way you did for the System Variables. After making these changes, open a new command console and run the Cordova requirements check again. 
-4. Do a Google search on any error messages you are receiving to see if you can identify the problem and its workarounds. 
-5. Consult with peers, especially those who are using the same operating system as you. 
-6. Consult with me.
+    * If you are workign on a Windows machine, try setting the environment settings (defining the ANDROID_SDK_ROOT and JAVA_HOME variables and updating the Path    variable) for your User Variables (top half of the window) in the same way you did for the System Variables. After making these changes, open a new command console and run the Cordova requirements check again. 
+3. Do a Google search on any error messages you are receiving to see if you can identify the problem and its workarounds. 
+4. Consult with peers, especially those who are using the same operating system as you. 
+5. Consult with me.
 
 #### 6. Submission
 
