@@ -166,7 +166,7 @@ These exact steps may vary depending on the version of Windows you are running. 
 
     1. ```C:\Users\[your user]\AppData\Local\Android\Sdk\platform-tools```
     2. ```C:\Users\[your user]\AppData\Local\Android\Sdk\tools```
-    3. ```C:\Users\[your user]\AppData\Local\Android\Sdk\tools\tools\bin```
+    3. ```C:\Users\[your user]\AppData\Local\Android\Sdk\tools\bin```
     4. ```JAVA_HOME\bin```
 
 12. Click 'OK' to close the Path window. Click 'OK' again to close the Environment Variables window, and click 'OK' once more to close the System Properties window. 
