@@ -30,11 +30,11 @@ Open your computer's command prompt.
 
 * On Windows, enter the following command (and hit enter): 
 
-  ```C:\>npm install -g cordova```
+  ```npm install -g cordova```
 
 * On OS X and Linux, enter the following (and hit enter): 
 
-  ```   $ sudo npm install -g cordova```
+  ``` sudo npm install -g cordova```
 
 On my Windows computer, for instance, this looks like the following: 
 
