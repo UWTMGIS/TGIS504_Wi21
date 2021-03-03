@@ -173,8 +173,6 @@ These exact steps may vary depending on the version of Windows you are running. 
 
 #### For MacOS X/Linux
 
-*Note: as of 4pm on March 2, I have not gotten a chance to test this part of the instructions yet. I will prioritize doing so as soon as I am able and update the instructions accordingly if I notice anything amiss.* 
-
 For Mac and Linux machines, you can set environment variables using the command line console. This is quite a bit simpler than the Windows steps, though it may not seem like it at first. 
 
 Open your command line terminal and run the following command: 
