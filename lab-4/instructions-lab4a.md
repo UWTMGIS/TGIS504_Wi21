@@ -30,11 +30,11 @@ Open your computer's command prompt.
 
 * On Windows, enter the following command (and hit enter): 
 
-  ```C:\>npm install -g cordova```
+  ```npm install -g cordova```
 
 * On OS X and Linux, enter the following (and hit enter): 
 
-  ```   $ sudo npm install -g cordova```
+  ``` sudo npm install -g cordova```
 
 On my Windows computer, for instance, this looks like the following: 
 
@@ -120,7 +120,9 @@ Click 'Create Virtual Device'. Next, you must select the hardware model you want
 
 ![screenshot of hardware choice](images/screenshot9.png)
 
-Click 'Next'. On the next screen, you need to choose the system image (essentially a software version). It is important that you **select Q** and not the latest version (R), as Cordova is only compatible up to Android API Level 29. With Q selected, click 'Next'. You may give the device a name on this screen if you wish, or you can accept the default. Click 'Finish.' The new device should now appear in your list of Virtual Devices. Close the AVD Manager, and close Android Studio. 
+Click 'Next'. On the next screen, you need to choose the system image (essentially a software version). It is important that you **select Q** and not the latest version (R), as Cordova is only compatible up to Android API Level 29. With Q selected, click 'Next'. You may give the device a name on this screen if you wish, or you can accept the default. Click 'Finish.' The new device should now appear in your list of Virtual Devices. Close the AVD Manager. 
+
+Check that the AVD was installed correctly by opening up the SDK Manager (Configure > SDK Manager). You should see that Android 10.0 (Q) is installed. Other versions may also be installed, and that is fine, but if Android 10.0 (API level 29) is _not_ installed, click the checkbox next to it and hit 'Apply'. Click 'OK' to confirm the change and 'Finish' after the installation completes. Close the SDK Manager and close Android Studio. 
 
 Once you've downloaded Java JDK 8, Gradle, Android Studio, and the Android Virtual Device, it's a good idea to restart your computer. 
 
@@ -166,14 +168,12 @@ These exact steps may vary depending on the version of Windows you are running. 
 
     1. ```C:\Users\[your user]\AppData\Local\Android\Sdk\platform-tools```
     2. ```C:\Users\[your user]\AppData\Local\Android\Sdk\tools```
-    3. ```C:\Users\[your user]\AppData\Local\Android\Sdk\tools\tools\bin```
+    3. ```C:\Users\[your user]\AppData\Local\Android\Sdk\tools\bin```
     4. ```JAVA_HOME\bin```
 
 12. Click 'OK' to close the Path window. Click 'OK' again to close the Environment Variables window, and click 'OK' once more to close the System Properties window. 
 
 #### For MacOS X/Linux
-
-*Note: as of 4pm on March 2, I have not gotten a chance to test this part of the instructions yet. I will prioritize doing so as soon as I am able and update the instructions accordingly if I notice anything amiss.* 
 
 For Mac and Linux machines, you can set environment variables using the command line console. This is quite a bit simpler than the Windows steps, though it may not seem like it at first. 
 
@@ -187,7 +187,8 @@ This should open a document named `.bash_profile` in your default text editor. I
 
 ```bash
 export ANDROID_SDK_ROOT=/Development/android-sdk/
-export PATH=${PATH}:/Development/android-sdk/platform-tools:/Development/android-sdk/tools
+export PATH=${PATH}:/Development/android-sdk/platform-tools:/Development/android-sdk/tools:/opt/gradle/gradle-6.8.3/bin
+
 ```
 
 Save and close your text editor. 
@@ -212,6 +213,7 @@ If you do *not* get those results, don't panic. I suggest the following troubles
 
 1. Close and reopen the command interface, then run the check again.
 2. Check that you correctly set your environment settings, without any typos in the variable names or variable values (pathnames). After making any changes to the environment settings, make sure you open a new command console before running the check again.
+    * If you are workign on a Windows machine, try setting the environment settings (defining the ANDROID_SDK_ROOT and JAVA_HOME variables and updating the Path    variable) for your User Variables (top half of the window) in the same way you did for the System Variables. After making these changes, open a new command console and run the Cordova requirements check again. 
 3. Do a Google search on any error messages you are receiving to see if you can identify the problem and its workarounds. 
 4. Consult with peers, especially those who are using the same operating system as you. 
 5. Consult with me.
